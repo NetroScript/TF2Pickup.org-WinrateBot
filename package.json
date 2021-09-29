@@ -1,7 +1,6 @@
 {
   "devDependencies": {
     "@types/node": "^14.11.2",
-    "@types/string-similarity": "^4.0.0",
     "gts": "^3.1.0",
     "typescript": "^4.3.5"
   },
@@ -10,8 +9,10 @@
     "@typeit/discord": "^4.0.10",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
+    "didyoumean2": "^5.0.0",
     "discord.js": "^12.5.3",
-    "string-similarity": "^4.0.4"
+    "dotenv": "^10.0.0",
+    "tinygradient": "^1.1.5"
   },
   "scripts": {
     "lint": "gts lint",
@@ -20,8 +21,8 @@
     "fix": "gts fix",
     "run": "node build/index.js",
     "run-ts": "ts-node src/index.ts",
-    "prepare": "npm.cmd run compile",
-    "pretest": "npm.cmd run compile",
-    "posttest": "npm.cmd run lint"
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run lint"
   }
 }

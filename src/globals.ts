@@ -16,17 +16,14 @@ class GlobalData {
     this.gameModel = getModelForClass(Game);
   }
 
-  async getPlayerList(){
-    if(this.playerNames.length > 0 || Date.now() - this.lastUpdate.getTime() < 60000*20){
-      return this.playerNames;
-    } else {
-      await this.updatePlayerList();
-      return this.playerNames;
-    }
+  async getPlayerList() : Promise<string[]>{
+    await this.updatePlayerList();
+    return this.playerNames;
   }
 
   async updatePlayerList() {
-    if(this.lastUpdate.getTime() < 60000*20){
+    if(Date.now() - this.lastUpdate.getTime() > 60000*20){
+      console.log("Fetching Database Player Names")
       this.lastUpdate = new Date();
       this.playerNames = [];
       const players: Array<Player> = await this.playerModel.find();

@@ -1,7 +1,9 @@
 import {mongoose} from "@typegoose/typegoose";
 import { Client } from "@typeit/discord";
+import * as dotenv from "dotenv";
+dotenv.config({path: __dirname+'/.env'})
 
-mongoose.connect("***REMOVED***")
+mongoose.connect(process.env.DATABASE_URL as string)
 
 
 
@@ -24,8 +26,7 @@ async function main(){
     slashGuilds: "692819625359966258"*/
   });
 
-  //await client.login("***REMOVED***");
-  await client.login("***REMOVED***");
+  await client.login(process.env.DISCORD_BOT_TOKEN as string);
 
   console.log("Logged into Bot.")
   console.log(Client.getCommands());

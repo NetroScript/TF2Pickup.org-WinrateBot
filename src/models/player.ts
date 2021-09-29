@@ -1,9 +1,10 @@
 import { MongooseDocument } from './mongoose-document';
-import { prop, index } from '@typegoose/typegoose';
+import {prop, index, Ref} from '@typegoose/typegoose';
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import { PlayerAvatar } from './player-avatar';
 import { PlayerRole } from './player-role';
 import { TwitchTvUser } from './twitch-tv-user';
+import {Game} from "./game";
 
 @index({ steamId: 'hashed' })
 export class Player extends MongooseDocument {
@@ -37,4 +38,8 @@ export class Player extends MongooseDocument {
   @Type(() => TwitchTvUser)
   @prop({ type: TwitchTvUser })
   twitchTvUser?: TwitchTvUser;
+
+  @Exclude({ toPlainOnly: true })
+  @prop({ ref: () => Game })
+  activeGame?: Ref<Game>;
 }
