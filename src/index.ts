@@ -1,15 +1,26 @@
 import {mongoose} from "@typegoose/typegoose";
-import { Client } from "@typeit/discord";
+import {Client} from "@typeit/discord";
 import * as dotenv from "dotenv";
-dotenv.config({path: __dirname+'/.env'})
+import i18n from "i18n";
+import path from "path";
+
+dotenv.config({path: __dirname + '/.env'})
 
 mongoose.connect(process.env.DATABASE_URL as string)
 
 
+async function main() {
 
-async function main(){
+  i18n.configure({
+    locales: ["en", "de"],
+    directory: path.join(__dirname, 'locales'),
+    defaultLocale: "en"
+  })
 
-
+  if (process.env.LOCALE != undefined) {
+    console.log(`Using Locale: ${process.env.LOCALE} - Loading Path: ${path.join(__dirname, 'locales')}`)
+    i18n.setLocale(process.env.LOCALE as string);
+  }
 
   //return;
   const client = new Client({

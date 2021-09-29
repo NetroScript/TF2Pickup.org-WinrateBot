@@ -1,0 +1,15 @@
+{
+  "HELP_MESSAGE": "Bitte verwende den Befehl folgendermaßen: !winrate <Spieler> [<<Teammate>][><Gegner>][!<<Nicht Teammate>][!><Nicht Gegner>][|<Tage>].\nBeispiele:\n`!winrate Jack | 30` -> Zeige die Winrate von Jack in den letzten 30 Tagen an\n`!winrate Jack < Rising < amp-t` -> Zeige die Winrate von Jack mit allen Spielen bei denen Rising und Amp-T in  seinen Team waren\n`!winrate Jack!<danny!>danny|30` -> Zeige die Winrate von Jack von allen Spielen in den letzten 30 Tagen, in denen danny weder in seinem Team, noch im Gegner Team war",
+  "PLAYER_NOT_FOUND": "Spieler %s konnte nicht gefunden werden. Eine Liste aller Spieler findest du auf https://%s/players.",
+  "PLAYER_SEARCH_REPLACEMENT": "Original gesuchter Spieler %s konnte nicht gefunden werden. Stattdessen werden die Daten für %s angezeigt.",
+  "TOTAL": "Gesamt",
+  "TIME": "Zeitraum",
+  "LAST_N_DAYS": {
+    "one": "Letzter Tag",
+    "other": "Letzte %s Tage"
+  },
+  "ENEMY_PLAYERS": "Spieler im Gegner-Team",
+  "OWN_PLAYERS": "Spieler im eigenen Team",
+  "NOT_ENEMY_PLAYERS": "Spieler nicht im Gegner-Team",
+  "NOT_OWN_PLAYERS": "Spieler nicht im eigenen Team"
+}

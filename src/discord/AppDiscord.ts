@@ -7,7 +7,7 @@ import didYouMean from "didyoumean2";
 import {Player} from "../models/player";
 import {DocumentType} from "@typegoose/typegoose";
 import tinygradient from "tinygradient";
-
+import i18n from "i18n";
 
 interface PlayerNameResult {
   name: string
@@ -20,7 +20,7 @@ abstract class AppDiscord {
 
   private static async checkPlayerName(name: string): Promise<PlayerNameResult> {
 
-    let returnObject: PlayerNameResult  = {
+    let returnObject: PlayerNameResult = {
       name: "",
       originalName: undefined,
       failed: false
@@ -52,52 +52,52 @@ abstract class AppDiscord {
     console.log(`${new Date().toLocaleString()}: User ${message.author.tag} running: ${command}`);
 
     if (["?", "help", "hilfe"].includes(command.trim().toLowerCase())) {
-      message.reply("Bitte verwende den Befehl folgendermaßen: !winrate <Spieler> [<<Teammate>][><Gegner>][!<<Nicht Teammate>][!><Nicht Gegner>][|<Tage>].\nBeispiele: `!winrate Jack`, `!winrate Jack |30`, `!winrate Jack < Rising < amp-t`, `!winrate Jack<danny|30`,`!winrate Jack!<danny!>danny` ");
+      message.reply(i18n.__("HELP_MESSAGE"));
     } else {
       let name: string = "";
       let days = 0;
-      let additionalPlayers: {enemy: boolean, exclude: boolean, playerName: PlayerNameResult}[] = [];
+      let additionalPlayers: { enemy: boolean, exclude: boolean, playerName: PlayerNameResult }[] = [];
 
 
       let commandParts = command.split(/(?=[<>|!])/g).map(part => part.trim());
-      if(!["|", "<", ">", "!"].includes(commandParts[0][0])){
+      if (!["|", "<", ">", "!"].includes(commandParts[0][0])) {
         name = commandParts[0];
         commandParts = commandParts.slice(1);
       }
 
-      for (let i = 0; i < commandParts.length; i++){
+      for (let i = 0; i < commandParts.length; i++) {
         const part = commandParts[i];
         let exclude = false;
-        if(i > 0 && commandParts[i-1] === "!"){
+        if (i > 0 && commandParts[i - 1] === "!") {
           exclude = true;
         }
 
-        if(part.startsWith("|")){
+        if (part.startsWith("|")) {
           days = parseFloat(part.substr(1));
-        } else if(part.startsWith("<")) {
+        } else if (part.startsWith("<")) {
           additionalPlayers.push({enemy: false, exclude, playerName: await AppDiscord.checkPlayerName(part.substr(1))});
-        } else if(part.startsWith(">")) {
+        } else if (part.startsWith(">")) {
           additionalPlayers.push({enemy: true, exclude, playerName: await AppDiscord.checkPlayerName(part.substr(1))});
         }
       }
 
-      let filteredAdditionalPlayers: {enemy: boolean, exclude: boolean, playerName: PlayerNameResult, player: DocumentType<Player>}[] = [];
+      let filteredAdditionalPlayers: { enemy: boolean, exclude: boolean, playerName: PlayerNameResult, player: DocumentType<Player> }[] = [];
 
-      for (let i = 0; i < additionalPlayers.length; i++){
+      for (let i = 0; i < additionalPlayers.length; i++) {
         const player = additionalPlayers[i];
 
-        if(!player.playerName.failed){
-          const playerObject = await Global.playerModel.findOne({name: player.playerName.name })
-          if (playerObject != null){
+        if (!player.playerName.failed) {
+          const playerObject = await Global.playerModel.findOne({name: player.playerName.name})
+          if (playerObject != null) {
             filteredAdditionalPlayers.push({...player, player: playerObject})
           }
         }
       }
 
 
-      if (name.length === 0){
+      if (name.length === 0) {
         name = message.author.username.trim();
-        if(message.guild != null){
+        if (message.guild != null) {
           name = message.guild.member(message.author)?.nickname || name;
         }
       }
@@ -107,8 +107,8 @@ abstract class AppDiscord {
 
       let info = await AppDiscord.checkPlayerName(name);
 
-      if (info.failed){
-        await message.reply(`Spieler \`${name.replace(/`/, "")}\` konnte nicht gefunden werden. Eine Liste aller Spieler findest du auf https://tf2pickup.de/players.`);
+      if (info.failed) {
+        await message.reply(i18n.__("PLAYER_NOT_FOUND", name.replace(/`/, ""), process.env.DOMAIN || ".org"));
         return;
       } else {
         originalName = info.originalName;
@@ -124,7 +124,7 @@ abstract class AppDiscord {
           "launchedAt": {"$gte": (days == 0) ? new Date(0) : new Date(Date.now() - (days * 24 * 60 * 60 * 1000))}
         })).filter(game => {
 
-          if (filteredAdditionalPlayers.length == 0){
+          if (filteredAdditionalPlayers.length == 0) {
             return true;
           } else {
 
@@ -132,24 +132,24 @@ abstract class AppDiscord {
               return player._id.equals(slot.player);
             })[0];
 
-            for (let i = 0; i < filteredAdditionalPlayers.length; i++){
+            for (let i = 0; i < filteredAdditionalPlayers.length; i++) {
               const additionalPlayer = filteredAdditionalPlayers[i];
-              const additionalPlayerInfo =  game.slots.filter(slot => {
+              const additionalPlayerInfo = game.slots.filter(slot => {
                 return additionalPlayer.player._id.equals(slot.player);
               });
 
-              if(!additionalPlayer.exclude) {
+              if (!additionalPlayer.exclude) {
 
-                if(additionalPlayerInfo.length == 0){
+                if (additionalPlayerInfo.length == 0) {
                   return false;
                 }
 
-                if(!additionalPlayer.enemy ? playerInfo.team != additionalPlayerInfo[0].team : playerInfo.team == additionalPlayerInfo[0].team){
+                if (!additionalPlayer.enemy ? playerInfo.team != additionalPlayerInfo[0].team : playerInfo.team == additionalPlayerInfo[0].team) {
                   return false;
                 }
               } else {
-                if(additionalPlayerInfo.length > 0){
-                  if(additionalPlayer.enemy ? playerInfo.team != additionalPlayerInfo[0].team : playerInfo.team == additionalPlayerInfo[0].team){
+                if (additionalPlayerInfo.length > 0) {
+                  if (additionalPlayer.enemy ? playerInfo.team != additionalPlayerInfo[0].team : playerInfo.team == additionalPlayerInfo[0].team) {
                     return false;
                   }
                 }
@@ -201,19 +201,22 @@ abstract class AppDiscord {
         for (let key in infos) {
           let data = infos[key];
           data.total = data.ties + data.losses + data.wins;
-          data.winrate = data.wins + 0.5 * data.ties / data.total;
+          data.winrate = (data.wins + 0.5 * data.ties) / data.total;
           total.wins += data.wins;
           total.losses += data.losses;
           total.ties += data.ties;
           total.total += data.total;
         }
 
-        total.winrate = total.wins + 0.5 * total.ties / total.total;
+        total.winrate = (total.wins + 0.5 * total.ties) / total.total;
 
         let embed = new MessageEmbed().setTitle(name)
 
-        if(!isNaN(total.winrate)){
-          let gradient = tinygradient([{color: "#881f1f", pos: 0.25},{color: "#48af48", pos: 0.5}, {color: "#00ff1e", pos: 1.0}])
+        if (!isNaN(total.winrate)) {
+          let gradient = tinygradient([{color: "#881f1f", pos: 0.25}, {color: "#48af48", pos: 0.5}, {
+            color: "#00ff1e",
+            pos: 1.0
+          }])
           embed.setColor(gradient.rgbAt(total.winrate).toString("hex"))
         }
 
@@ -221,8 +224,8 @@ abstract class AppDiscord {
           embed.setThumbnail(player.avatar.large)
         }
 
-        if (originalName != undefined){
-          embed.setDescription(`Original gesuchter Spieler \`${originalName.replace(/`/, "")}\` konnte nicht gefunden werden. Stattdessen werden die Daten für \`${name.replace(/`/, "")}\` angezeigt.`);
+        if (originalName != undefined) {
+          embed.setDescription(i18n.__("PLAYER_SEARCH_REPLACEMENT", originalName.replace(/`/, ""), name.replace(/`/, "")));
         }
 
         let fields = [];
@@ -241,17 +244,17 @@ abstract class AppDiscord {
           */
         });
         fields.push({
-          name: "Gesamt",
+          name: i18n.__("TOTAL"),
           inline: true,
           value: `W: ${total.wins} T: ${total.ties} L: ${total.losses}\nWinrate: ${total.winrate.toFixed(2)}`
         });
 
         if (days != 0) {
 
-          fields.push({name: "Zeitraum", inline: true, value: `Letzte ${days} Tage`});
+          fields.push({name: i18n.__("TIME"), inline: true, value: i18n.__n("LAST_N_DAYS", days)});
         }
 
-        if (filteredAdditionalPlayers.length > 0){
+        if (filteredAdditionalPlayers.length > 0) {
 
           let enemies = filteredAdditionalPlayers.filter(player => player.enemy && !player.exclude);
           let teamMates = filteredAdditionalPlayers.filter(player => !player.enemy && !player.exclude);
@@ -260,17 +263,33 @@ abstract class AppDiscord {
           let notTeamMates = filteredAdditionalPlayers.filter(player => !player.enemy && player.exclude);
 
           if (enemies.length > 0) {
-            fields.push({name: "Spieler im Gegnerteam", inline: true, value: `${enemies.map(player => player.playerName.name).join(", ")}`});
+            fields.push({
+              name: i18n.__("ENEMY_PLAYERS"),
+              inline: true,
+              value: `${enemies.map(player => player.playerName.name).join(", ")}`
+            });
           }
-          if (teamMates.length > 0){
-            fields.push({name: "Spieler im eigenen Team", inline: true, value: `${teamMates.map(player => player.playerName.name).join(", ")}`});
+          if (teamMates.length > 0) {
+            fields.push({
+              name: i18n.__("OWN_PLAYERS"),
+              inline: true,
+              value: `${teamMates.map(player => player.playerName.name).join(", ")}`
+            });
           }
 
           if (notEnemies.length > 0) {
-            fields.push({name: "Spieler nicht im Gegnerteam", inline: true, value: `${notEnemies.map(player => player.playerName.name).join(", ")}`});
+            fields.push({
+              name: i18n.__("NOT_ENEMY_PLAYERS"),
+              inline: true,
+              value: `${notEnemies.map(player => player.playerName.name).join(", ")}`
+            });
           }
-          if (notTeamMates.length > 0){
-            fields.push({name: "Spieler nicht im eigenen Team", inline: true, value: `${notTeamMates.map(player => player.playerName.name).join(", ")}`});
+          if (notTeamMates.length > 0) {
+            fields.push({
+              name: i18n.__("NOT_OWN_PLAYERS"),
+              inline: true,
+              value: `${notTeamMates.map(player => player.playerName.name).join(", ")}`
+            });
           }
 
         }
