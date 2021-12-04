@@ -304,4 +304,121 @@ abstract class AppDiscord {
     }
   }
 
+
+  // Reachable with the command: !hello
+  @Command("medcheck")
+  @Description("Get some medic statistics of a single player.")
+  private async medCheck(message: CommandMessage) {
+    let command = message.commandContent.replace("medcheck", "").trim();
+
+    console.log(`${new Date().toLocaleString()}: User ${message.author.tag} running: ${command}`);
+
+    let name: string = command;
+
+    if (name.length === 0) {
+      name = message.author.username.trim();
+      if (message.guild != null) {
+        name = message.guild.member(message.author)?.nickname || name;
+      }
+    }
+
+
+    let originalName: string | undefined = undefined;
+
+    let info = await AppDiscord.checkPlayerName(name);
+
+    if (info.failed) {
+      await message.reply(i18n.__("PLAYER_NOT_FOUND", name.replace(/`/, ""), process.env.DOMAIN || ".org"));
+      return;
+    } else {
+      originalName = info.originalName;
+      name = info.name;
+    }
+
+    const player = await Global.playerModel.findOne({name});
+
+    if (player != null) {
+      const games: Game[] = (await Global.gameModel.find({
+        "slots": {
+          $elemMatch: {
+            "player": player._id,
+            "gameClass": "medic"
+          }
+        },
+        "slots.player": player._id,
+      })).reverse();
+
+      const game_count: number = (await Global.gameModel.find({
+        "slots.player": player._id,
+      }).count())
+
+      const medic_rate = games.length/game_count;
+
+      let medic_last_week = 0;
+      let medic_last_month = 0;
+
+      let medic_last_time: Date | undefined;
+
+      games.forEach(game => {
+
+        if(game.endedAt != undefined){
+
+          if(medic_last_time == undefined) {
+            medic_last_time = game.endedAt
+          }
+
+          if (game.endedAt?.getTime() > Date.now() - 1000 * 60 * 60 * 24 * 7) {
+            medic_last_week++;
+          }
+
+          if (game.endedAt?.getTime() > Date.now() - 1000 * 60 * 60 * 24 * 31) {
+            medic_last_month++;
+          }
+        }
+      })
+
+      let embed = new MessageEmbed().setTitle(name)
+
+
+      let gradient = tinygradient([{color: "#881f1f", pos: 0.0}, {color: "#48af48", pos: 0.1}, {
+        color: "#00ff1e",
+        pos: 1.0
+      }])
+      embed.setColor(gradient.rgbAt(medic_rate).toString("hex"))
+
+
+      if (player.avatar != undefined) {
+        embed.setThumbnail(player.avatar.large)
+      }
+
+      if (originalName != undefined) {
+        embed.setDescription(i18n.__("PLAYER_SEARCH_REPLACEMENT", originalName.replace(/`/, ""), name.replace(/`/, "")));
+      }
+
+      embed.addFields([
+        {
+          name: i18n.__("TOTAL"),
+          inline: true,
+          value: `Games: ${game_count} | Medic: ${games.length} \nMedicrate: ${medic_rate.toFixed(2)}`
+        },
+        {
+          name: i18n.__("MED_LAST_MONTH"),
+          inline: true,
+          value: medic_last_month
+        },
+        {
+          name: i18n.__("MED_LAST_WEEK"),
+          inline: true,
+          value: medic_last_week
+        },
+        {
+          name: i18n.__("MED_LAST_TIME"),
+          inline: true,
+          value: medic_last_time != undefined ? medic_last_time?.toISOString().substr(0, 10) : i18n.__("NEVER_MED")
+        },
+      ]);
+      await message.channel.send(embed);
+    }
+  }
+
 }

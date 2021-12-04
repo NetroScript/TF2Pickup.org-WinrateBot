@@ -11,5 +11,9 @@
   "ENEMY_PLAYERS": "Spieler im Gegner-Team",
   "OWN_PLAYERS": "Spieler im eigenen Team",
   "NOT_ENEMY_PLAYERS": "Spieler nicht im Gegner-Team",
-  "NOT_OWN_PLAYERS": "Spieler nicht im eigenen Team"
+  "NOT_OWN_PLAYERS": "Spieler nicht im eigenen Team",
+  "MED_LAST_MONTH": "X Medic im letzten Monat",
+  "MED_LAST_WEEK": "X Medic in der letzten Woche",
+  "MED_LAST_TIME": "Letztes Medic Game",
+  "NEVER_MED": "Dieser Schmarotzer hat noch nie Medic gespielt"
 }

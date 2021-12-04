@@ -53,7 +53,7 @@
 
 This bot hooks as additional connection into your already existing bot for your [tf2pickup.org](https://github.com/tf2pickup-org/server) instance.
 
-It offers a single `!winrate <Arguments>` command to show exactly that. To get more info about it, you can run `!winrate help` or `!winrate ?`. Then you will be shown the following text: 
+It offers a `!winrate <Arguments>` command to show exactly that. To get more info about it, you can run `!winrate help` or `!winrate ?`. Then you will be shown the following text: 
 
 ```
 Please use the command the following way: !winrate <player> [<<teammate>][><enemy>][!<<not teammate>][!><not enemy>][|<days since>].
@@ -64,6 +64,9 @@ Examples:
 ```
 
 This help command should already explain all the features available.
+
+Additionally available is the `!checkmed <Player>` command. This command shows you the total / total last week / total last month medic games of a player. In addition, it shows when that player last played medic.
+
 Localisation is available for german and english. For more see the following chapter.
 
 <!-- GETTING STARTED -->

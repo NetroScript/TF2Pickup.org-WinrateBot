@@ -11,5 +11,9 @@
   "ENEMY_PLAYERS": "Player in opponent team",
   "OWN_PLAYERS": "Player in own team",
   "NOT_ENEMY_PLAYERS": "Player not in opponent team",
-  "NOT_OWN_PLAYERS": "Player not in own team"
+  "NOT_OWN_PLAYERS": "Player not in own team",
+  "MED_LAST_MONTH": "Times Medic last month",
+  "MED_LAST_WEEK": "Times Medic last week",
+  "MED_LAST_TIME": "Last medic game",
+  "NEVER_MED": "This moocher never played medic"
 }

@@ -9,6 +9,9 @@ export class Game {
   @prop({ default: () => new Date() })
   launchedAt?: Date;
 
+  @prop()
+  endedAt?: Date;
+
   @prop({ required: true, unique: true })
   number!: number;
 
