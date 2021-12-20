@@ -65,7 +65,10 @@ Examples:
 
 This help command should already explain all the features available.
 
-Additionally available is the `!checkmed <Player>` command. This command shows you the total / total last week / total last month medic games of a player. In addition, it shows when that player last played medic.
+Additionally available are the following commands:
+
+* `!checkmed <Player>`. This command shows you the total / total last week / total last month medic games of a player. In addition, it shows when that player last played medic.
+* `!lastgame`. This command shows a break down of when the last game was (in days, hours, minutes, ...)
 
 Localisation is available for german and english. For more see the following chapter.
 

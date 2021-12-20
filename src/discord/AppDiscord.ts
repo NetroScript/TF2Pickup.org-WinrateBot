@@ -8,6 +8,7 @@ import {Player} from "../models/player";
 import {DocumentType} from "@typegoose/typegoose";
 import tinygradient from "tinygradient";
 import i18n from "i18n";
+import {dateDiff} from "../date_difference";
 
 interface PlayerNameResult {
   name: string
@@ -43,7 +44,6 @@ abstract class AppDiscord {
     return returnObject;
   }
 
-  // Reachable with the command: !hello
   @Command("winrate")
   @Description("Get the winrate of a single player. Optional arguments are time, players which were in the enemy team and players which were in the own team. !winrate <player> [<team mate][>enemy][!<not team mate][!> not enemy][|dayssince]")
   private async winrate(message: CommandMessage) {
@@ -305,7 +305,6 @@ abstract class AppDiscord {
   }
 
 
-  // Reachable with the command: !hello
   @Command("medcheck")
   @Description("Get some medic statistics of a single player.")
   private async medCheck(message: CommandMessage) {
@@ -419,6 +418,29 @@ abstract class AppDiscord {
       ]);
       await message.channel.send(embed);
     }
+  }
+
+
+  @Command("lastgame")
+  @Description("Show how long it has been since the last pug.")
+  private async lastGame(message: CommandMessage) {
+
+    const last_game = (await Global.gameModel.find({"state": GameState.ended}).sort({_id: -1}).limit(1)).pop();
+
+    if(last_game != undefined) {
+      const time_difference = dateDiff(last_game.endedAt!);
+
+      let embed = new MessageEmbed().setTitle(i18n.__("TITLE_LAST_GAME"))
+
+      Object.keys(time_difference).forEach(key => {
+
+        if(time_difference[key] > 0) {
+          embed.addField(time_difference[key].toString(), i18n.__(key.toUpperCase()), true);
+        }
+      })
+      await message.channel.send(embed);
+    }
+
   }
 
 }

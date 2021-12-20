@@ -15,5 +15,13 @@
   "MED_LAST_MONTH": "X Medic im letzten Monat",
   "MED_LAST_WEEK": "X Medic in der letzten Woche",
   "MED_LAST_TIME": "Letztes Medic Game",
-  "NEVER_MED": "Dieser Schmarotzer hat noch nie Medic gespielt"
+  "NEVER_MED": "Dieser Schmarotzer hat noch nie Medic gespielt",
+  "TITLE_LAST_GAME": "Seit dem letzten Pug sind vergangen:",
+  "YEAR": "Jahre",
+  "MONTH": "Monate",
+  "WEEK": "Wochen",
+  "DAY": "Tage",
+  "HOUR": "Stunden",
+  "MINUTE": "Minuten",
+  "SECOND": "Sekunden"
 }
