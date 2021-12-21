@@ -435,7 +435,7 @@ abstract class AppDiscord {
       Object.keys(time_difference).forEach(key => {
 
         if(time_difference[key] > 0) {
-          embed.addField(time_difference[key].toString(), i18n.__(key.toUpperCase()), true);
+          embed.addField(time_difference[key].toString(), i18n.__((key + ((time_difference[key] == 1) ? "" : "s")).toUpperCase()), true);
         }
       })
       await message.channel.send(embed);
